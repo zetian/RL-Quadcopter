@@ -62,7 +62,7 @@ class DDPGActor:
 
         # Define optimizer and training function
         optimizer = optimizers.Adam()
-        updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss)
+        updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss, constraints = [])
         self.train_fn = K.function(
             inputs=[self.model.input, action_gradients, K.learning_phase()],
             outputs=[],
