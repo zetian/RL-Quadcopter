@@ -3,7 +3,7 @@ from physics_sim import PhysicsSim
 
 class Task():
     """Task (environment) that defines the goal and provides feedback to the agent."""
-    def __init__(self, init_pose=np.array([0.0, 0.0, 10.0, 0.0, 0.0, 0.0]), init_velocities=None,
+    def __init__(self, init_pose=np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), init_velocities=None,
         init_angle_velocities=None, runtime=5., target_pos=None, action_repeat=None):
         """Initialize a Task object.
         Params
@@ -32,12 +32,12 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward."""
-        #        reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
-        reward = 0
-        if not np.all(self.target_pos == self.init_pos[:3]):
-            a = np.cross(self.target_pos - self.sim.pose[:3], self.flight_path)
-            reward -= np.linalg.norm(a) / np.linalg.norm(self.flight_path)
-        reward -= np.linalg.norm([self.sim.pose[:3] - self.target_pos])
+        reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        # reward = 0
+        # if not np.all(self.target_pos == self.init_pos[:3]):
+        #     a = np.cross(self.target_pos - self.sim.pose[:3], self.flight_path)
+        #     reward -= np.linalg.norm(a) / np.linalg.norm(self.flight_path)
+        # reward -= np.linalg.norm([self.sim.pose[:3] - self.target_pos])
 
         # print('task reward : ',reward)
         return reward
