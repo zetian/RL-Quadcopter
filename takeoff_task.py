@@ -3,7 +3,7 @@ import numpy as np
 
 class TakeOffTask(Task):
     
-    def __init__(self, target_pos=None, runtime=5., action_repeat=1):
+    def __init__(self, init_pose, target_pos=None, runtime=5., action_repeat=1):
         super().__init__(init_pose=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0], init_velocities=None, init_angle_velocities=None
                          , runtime=runtime, target_pos=target_pos, action_repeat=action_repeat)
         self.z_bonus = 10
@@ -18,24 +18,15 @@ class TakeOffTask(Task):
         y_diff = abs(self.sim.pose[1]- self.target_pos[1])
         # z_factor = self.z_bonus if z_diff >= 0 else 5.0 #z_bonus is 5.0
 
-        # # The closer the better the reward
-        # if z_diff<=0: #if current is below target
-        #     distance = abs(z_diff) 
-        #     reward += (1 / distance) * z_factor
-        # else: #if higher than target
-        #     distance = z_diff
-        #     reward += distance * z_factor
-        reward = reward - x_diff - y_diff - z_diff
         
-        #Punish any descent from initial z of 2
-        up_or_down = self.sim.pose[2] #if descent is neg, it descended
-        reward+= up_or_down 
-        #to reward vertical velocity#####################################################################
+        # reward = reward - x_diff - y_diff - z_diff
+        reward = reward + 1/(x_diff + 0.01) + 1/(y_diff + 0.01) +1/(z_diff + 0.001)
+        
         reward = reward - 2*abs(self.sim.v[0]) - 2*abs(self.sim.v[1])
         vz = self.sim.v[2]
-        if vz <= 0:
+        if self.sim.v[2] <= 0:
             reward-=1
-        if vz>=0: #the faster this is, the higher the reward
+        else: #the faster this is, the higher the reward
             reward += vz
        
         #toReturn = np.tanh(reward) #normalize return to [-1,1]
